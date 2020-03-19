@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Linq;
@@ -19,11 +20,39 @@ namespace LinqSamples
 
             const string names_file = "Names.txt";
 
-            var students = GetStudents(names_file);
+            IEnumerable<Student> students = GetStudents(names_file).ToArray();
 
-            var student_surnames = students.Select(s => s.Name);
-            foreach (var str in student_surnames)
-                Console.WriteLine(str);
+            var avg_ratings = students.Select(s => new
+            {
+                Student = s,
+                AvgRating = s.Ratings.Average()
+            });
+
+            foreach (var value in avg_ratings)
+                Console.WriteLine("{0} {1} {2} -- {3}",
+                    value.Student.SurName,
+                    value.Student.Name,
+                    value.Student.Patronymic,
+                    value.AvgRating);
+
+            Console.WriteLine();
+            Console.WriteLine("Students count: {0}", students.Count());
+
+            var best_student = students.Where(s => s.Ratings.Average() >= 4);
+            Console.WriteLine("Best students count: {0}", best_student.Count());
+
+            var other_students = students.Where(s => s.Ratings.Average() < 4);
+            Console.WriteLine("Other students count: {0}", other_students.Count());
+
+            Console.WriteLine();
+            Console.WriteLine(new string('-', Console.BufferWidth));
+            var arranged_students = students.OrderBy(s => s.Ratings.Average());
+            foreach (var value in arranged_students)
+                Console.WriteLine("{0} {1} {2} -- {3}",
+                    value.SurName,
+                    value.Name,
+                    value.Patronymic,
+                    value.Ratings.Average());
 
             Console.WriteLine("Программа завершена!");
             Console.ReadLine();
@@ -55,7 +84,7 @@ namespace LinqSamples
                         Patronymic = patronymic
                     };
                     index++;
-                    for (int i = 0, count = rnd.Next(0, 51); i < count; i++)
+                    for (int i = 0, count = rnd.Next(1, 51); i < count; i++)
                         student.Ratings.Add(rnd.Next(2, 6));
 
                     student.DayOfBirth = new DateTime(
