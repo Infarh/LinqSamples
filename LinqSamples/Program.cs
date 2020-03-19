@@ -10,7 +10,12 @@ namespace LinqSamples
     {
         static void Main(string[] args)
         {
+            // https://github.com/infarh/LinqSamples
             // http://megagenerator.ru/namefio/
+
+            const string names_file = "Names.txt";
+
+
 
 
 
