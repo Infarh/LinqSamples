@@ -16,5 +16,7 @@ namespace LinqSamples
         public DateTime DayOfBirth { get; set; }
 
         public List<int> Ratings { get; set; } = new List<int>();
+
+        public int GroupId { get; set; }
     }
 }
