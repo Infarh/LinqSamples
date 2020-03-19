@@ -54,6 +54,43 @@ namespace LinqSamples
                     value.Patronymic,
                     value.Ratings.Average());
 
+            var groups = Enumerable.Range(1, __GroupCount)
+               .Select(i => new Group
+                {
+                    Id = i,
+                    Name = $"Группа {i}"
+                });
+
+            var student_groups = students.Join(
+                groups,
+                student => student.GroupId,
+                group => group.Id,
+                (student, group) => new { Student = student, Group = group });
+
+            Console.WriteLine();
+            Console.WriteLine(new string('-', Console.BufferWidth));
+            foreach (var info in student_groups)
+                Console.WriteLine("{0} {1} {2} - {3}",
+                    info.Student.SurName,
+                    info.Student.Name,
+                    info.Student.Patronymic,
+                    info.Group.Name);
+
+            var group_of_students = student_groups.GroupBy(info => info.Group.Name);
+            var student_dict_of_groups = group_of_students.ToDictionary(
+                g => g.Key,
+                g => g.ToArray());
+
+            var students_of_group7 = student_dict_of_groups["Группа 7"];
+            Console.WriteLine();
+            Console.WriteLine(new string('-', Console.BufferWidth));
+            foreach (var info in students_of_group7)
+                Console.WriteLine("{0} {1} {2} - {3}",
+                    info.Student.SurName,
+                    info.Student.Name,
+                    info.Student.Patronymic,
+                    info.Group.Name);
+
             Console.WriteLine("Программа завершена!");
             Console.ReadLine();
         }
